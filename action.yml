@@ -1,0 +1,64 @@
+name: 'Test Anchor'
+author: 'Ihor Muliar'
+description: 'Run "anchor test" in a Solana Anchor project.'
+
+branding:
+  icon: anchor
+  color: blue
+
+inputs:
+  node-version:
+    description: 'Version of Node.js to use'
+    required: false
+    default: '22.14.0' # LTS
+  solana-cli-version:
+    description: 'Version of Solana CLI to use'
+    required: false
+    default: '2.2.3' 
+  anchor-version:
+    description: 'Version of Anchor to use'
+    required: false
+    default: '0.31.0'
+  workspace-dir:
+    description: 'Anchor workspace directory'
+    required: false
+    default: '.'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Setup Anchor environment'
+      uses: IhorMuliar/setup-anchor-environment@v1
+      with: 
+        anchor-version: ${{ inputs.anchor-version }}
+        solana-cli-version: ${{ inputs.solana-cli-version }}
+        node-version: ${{ inputs.node-version }}
+        workspace-dir: ${{ inputs.workspace-dir }}
+        
+    - name: Setup Solana Config
+      run: |
+        solana address || solana-keygen new --no-bip39-passphrase
+        solana config set --url localhost
+      shell: bash
+    
+    - name: Cache Anchor Build
+      id: cache-anchor-build
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ inputs.workspace-dir }}/target/deploy/
+          ${{ inputs.workspace-dir }}/target/idl/
+          ${{ inputs.workspace-dir }}/target/types/
+        key: anchor-build-${{ runner.os }}-${{ hashFiles('${{ inputs.workspace-dir }}/programs/**/*.rs', '${{ inputs.workspace-dir }}/Anchor.toml') }}
+
+    - name: Anchor Build
+      run: |
+        cd ${{ inputs.workspace-dir }}
+        anchor build
+      shell: bash
+
+    - name: Anchor Tests
+      run: |
+        cd ${{ inputs.workspace-dir }}
+        anchor test
+      shell: bash
