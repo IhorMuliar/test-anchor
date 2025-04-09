@@ -23,7 +23,11 @@ inputs:
     description: 'Anchor workspace directory'
     required: false
     default: '.'
-
+  features:
+    description: 'Features to pass to cargo'
+    required: false
+    default: 'default'
+    
 runs:
   using: 'composite'
   steps:
@@ -60,5 +64,5 @@ runs:
     - name: Anchor Tests
       run: |
         cd ${{ inputs.workspace-dir }}
-        anchor test
+        anchor test -- --features ${{ inputs.features }}
       shell: bash
