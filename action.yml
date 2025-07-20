@@ -18,7 +18,7 @@ inputs:
   anchor-version:
     description: 'Version of Anchor to use'
     required: false
-    default: '0.31.0'
+    default: '0.31.1'
   workspace-dir:
     description: 'Anchor workspace directory'
     required: false
@@ -32,7 +32,7 @@ runs:
   using: 'composite'
   steps:
     - name: 'Setup Anchor environment'
-      uses: IhorMuliar/setup-anchor-environment@v1
+      uses: IhorMuliar/setup-anchor-environment@v1.0.2
       with: 
         anchor-version: ${{ inputs.anchor-version }}
         solana-cli-version: ${{ inputs.solana-cli-version }}
