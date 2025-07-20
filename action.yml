@@ -32,7 +32,7 @@ runs:
   using: 'composite'
   steps:
     - name: 'Setup Anchor environment'
-      uses: IhorMuliar/setup-anchor-environment@v1.0.2
+      uses: IhorMuliar/setup-anchor-environment@v1.0.3-alpha
       with: 
         anchor-version: ${{ inputs.anchor-version }}
         solana-cli-version: ${{ inputs.solana-cli-version }}
